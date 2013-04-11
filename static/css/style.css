@@ -1,0 +1,38 @@
+#light {
+    background-color: #111;
+    opacity: 0.8;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 9;
+    display: none;
+}
+.player_content {
+    position: relative;
+    width: 100%;
+    height: 420px;
+}
+.player_embed {
+    position: absolute;
+    width: 100%;
+    height: 420px;
+    z-index: 10;
+}
+.mxAd {
+    text-align: center;
+    margin: 1em auto;
+}
+.mx_title {
+    font-weight: normal;
+}
+
+.capitulo a {
+    background: url(../img/arrow_right.png) no-repeat 10px center;
+    padding:8px 10px 8px 45px!important;
+    position: relative;
+    text-decoration: none;
+}
+.capitulo a span {display: block;}
+.capitulo a span.title {font-size: 15px; margin-bottom: 5px;}
+.capitulo a span.info {font-size: 10px; text-transform: uppercase; color: #9B9B9B;}
+.capitulo a span.icon {width: 24px; height: 24px; position: absolute; top: 10px; right: 10px;}
