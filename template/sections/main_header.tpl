@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="{$url_static}/js/jTable/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="{$url_static}/js/jTable/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" />
     {/if}
+    <script type="text/javascript" src="{$url_static}/player/jwplayer.js"></script>
 </head>
 <body>
+    <div id="light"></div>
     <div id="fb-root"></div>
     {literal}
     <script>(function(d, s, id) {
@@ -23,7 +25,6 @@
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
     {/literal}
-    <div id="light"></div>
     <div class="container">
         <div class="row-fluid">
             <div class="span4">

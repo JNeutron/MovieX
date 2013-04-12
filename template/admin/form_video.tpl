@@ -26,14 +26,14 @@
                                     <span class="help-block">Calidad principal de esta pel&iacute;cula.</span>
                                 </div>
                             </div>
-                            <div id="source" class="control-group focus"{if $video.v_servidor == 2} style="display:none"{/if}>
+                            <div id="source" class="control-group focus"{if $video.v_servidor == 1} style="display:none"{/if}>
                                 <div class="control-label" id="sourceFocus"><label for="source">Video Url:</label></div>
                                 <div class="controls">
-                                    <input type="text" name="source" value="{if $video.v_servidor != 2}{$video.v_source}{/if}" />
+                                    <input type="text" name="source" value="{if $video.v_servidor != 1}{$video.v_source}{/if}" class="input-xxlarge" />
                                     <span class="help-block">Url del video, se obtendr&aacute;a el ID autom&aacute;ticamente dependiendo el servidor seleccionado.</span>
                                 </div>
                             </div>
-                            <div id="embed" class="control-group focus"{if $video.v_servidor != 2} style="display:none;"{/if}>
+                            <div id="embed" class="control-group focus"{if $video.v_servidor != 1} style="display:none;"{/if}>
                                 <div class="control-label" id="embedFocus"><label for="embed">C&oacute;digo:</label></div>
                                 <div class="controls">
                                     <textarea name="embed" rows="5" class="input-xlarge">{if $video.v_servidor == 2}{$video.v_source}{/if}</textarea>

@@ -1,10 +1,23 @@
                     <h3 class="mx_title"><a href="{$url}/{$video.g_titulo|seo}/" title="Regresar a {$video.g_titulo}" class="qtip">{$video.g_titulo}</a> &raquo; <a href="{$url}/{$video.g_titulo|seo}/{$video.p_titulo|seo}.html" title="Regresar a {$video.p_titulo}" class="qtip">{$video.p_titulo}</a></h3>
                     <div class="row-fluid">
                         <div class="span12">
-                            <div class="player_content">
-                                <div class="player_embed">
-                                    {$video.embed.code}
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#opt1" data-toggle="tab">Opción 1</a></li>
+                                {if $video.source && $video.plugin}<li><a href="#opt2" data-toggle="tab">Opción 2</a></li>{/if}
+                            </ul>
+                            <div class="player_content tab-content" style="overflow: hidden;">
+                                <div id="opt1" class="player_embed tab-pane active">
+                                    {if $video.source && $video.plugin}
+                                    {include file='modules/moviex_gk_player.tpl'}
+                                    {else}
+                                    {$video.embed}
+                                    {/if}
                                 </div>
+                                {if $video.source && $video.plugin}
+                                <div id="opt2" class="player_embed tab-pane">
+                                    {$video.embed}  
+                                </div>
+                                {/if}
                             </div>
                         </div>
                     </div>

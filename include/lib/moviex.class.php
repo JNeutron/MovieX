@@ -205,8 +205,22 @@ class Moviex extends Database {
         $query = $this->query("SELECT m.p_titulo, m.p_date, m.p_v_up, m.p_v_down, g.g_titulo, v.*, c.c_titulo, i.i_titulo, s.s_titulo FROM cb_peliculas AS m LEFT JOIN cb_videos AS v ON m.pelicula_id = v.pelicula_id LEFT JOIN cb_generos AS g ON m.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON v.v_calidad = c.calidad_id LEFT JOIN cb_idiomas AS i ON v.v_idioma = i.idioma_id LEFT JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE v.video_id = {$vid} LIMIT 1");
         $data = $this->fetch_assoc($query);
         $this->free($query);
+        
         // EMBED
-        $data['embed'] = $this->getEmbedVideo($data['v_source'], $data['v_servidor']);
+        if ($data['v_servidor'] == 1)
+        {
+            $data['plugin'] = false;
+            $data['source'] = false;
+            $data['embed'] = htmlspecialchars_decode($data['v_source'], ENT_QUOTES);
+        }
+        else
+        {
+            $plugin = $this->plugin($data['s_titulo']);
+            //
+            $data['plugin'] = $plugin->isPlugin();
+            $data['source'] = $plugin->getLink($data['v_source']);
+            $data['embed'] = $plugin->getEmbed($data['v_source']);   
+        }
         // UPDATE
         if(!empty($data)) $this->update("cb_videos","v_hits = v_hits + 1","video_id = {$data['video_id']}");
         //
@@ -424,4 +438,26 @@ class Moviex extends Database {
 		//$current_url = urlencode($current_url);
 		return $current_url;
 	}
+    
+    
+    /**
+     * Cargar Plugin de Servidor
+     * 
+     * @param string $serverName
+     * @return void
+     */
+    public function &plugin($serverName)
+    {
+        if (file_exists($filePath = INC_PATH . 'plugins' . DS . strtolower($serverName) . '.php'))
+        {
+            require $filePath;
+            
+            if (class_exists($serverName))
+            {
+                return new $serverName();
+            }
+        }
+        
+        return false;
+    }
  }

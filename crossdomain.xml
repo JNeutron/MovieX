@@ -1,0 +1,5 @@
+<cross-domain-policy>
+<allow-access-from domain="*.movshare.net" />
+<allow-access-from domain="*.putlocker.com" />
+<allow-access-from domain="*.sockshare.com" />
+</cross-domain-policy>

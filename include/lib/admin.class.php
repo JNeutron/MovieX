@@ -379,12 +379,17 @@ class Admin extends Database {
      * @param none
      * @return void
      */
-    public function getVideo($id = ''){
+    public function getVideo($id = '')
+    {
+        global $moviex;
         $id = empty($id) ? $_GET['id'] : $id;
         //
-        $query = $this->select("cb_videos","*","video_id = {$id}", null, 1);
+        $query = $this->query('SELECT v.*, s.s_titulo AS server FROM cb_videos AS v JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE video_id = ' . (int) $id . ' LIMIT 1');
         $data = $this->fetch_assoc($query);
         $this->free();
+        //
+        $plugin = $moviex->plugin($data['server']);
+        $data['v_source'] = $plugin->getLink($data['v_source']);
         return $data;
     }
     /**
@@ -401,7 +406,7 @@ class Admin extends Database {
             'v_calidad' => empty($_POST['calidad']) ? null : $_POST['calidad'],
             'v_idioma' => empty($_POST['idioma']) ? null : $_POST['idioma'],
             'v_servidor' => empty($_POST['servidor']) ? null : $_POST['servidor'],
-            'v_source' => ($_POST['servidor'] == 2) ? $_POST['embed'] : $_POST['source'],
+            'v_source' => ($_POST['servidor'] == 1) ? $_POST['embed'] : $_POST['source'],
             'v_upload' => $_POST['date'],
             'v_online' => empty($_POST['online']) ? 0 : 1,
             'v_reports' => empty($_POST['reports']) ? 0 : $_POST['reports']
@@ -465,32 +470,27 @@ class Admin extends Database {
      * @param string, int
      * @return string
      */
-    private function getVideoID($source, $server){
-        switch($server['servidor_id']){
-            # MEGAVIDEO #
-            case 1: 
-                // SOLO ES EL ID?
-                if(strlen($source) == 8) return $source;
-                else {
-                    $video_id = explode('v=', $source);
-                    $video_id = substr($video_id[1], 0 , 8);
-                }
-            break;
-            # EMBED #
-            case 2:
-                $embed = htmlspecialchars_decode($source, ENT_QUOTES);
-                $embed = str_replace("'",'"', $embed);
-                $embed = preg_replace('/width="(\d+)"/i', 'width="100%"', $embed);
-                $embed = preg_replace('/height="(\d+)"/i', 'height="100%"', $embed);
-                $video_id = $embed;
-            break;
-            default:
-                $this->error = 'El servidor elegido no existe.';
-                return false;
-            break;
+    private function getVideoID($source, $server)
+    {
+        global $moviex;
+        
+        $video_id = null;
+        
+        if ($server['servidor_id'] == 1)
+        {
+            $embed = htmlspecialchars_decode($source, ENT_QUOTES);
+            $embed = str_replace("'",'"', $embed);
+            $embed = preg_replace('/width="(\d+)"/i', 'width="100%"', $embed);
+            $embed = preg_replace('/height="(\d+)"/i', 'height="100%"', $embed);
+            $video_id = $embed;
+        }
+        else
+        {
+            $plugin = $moviex->plugin($server['s_titulo']);
+            $video_id = $plugin->getId($source);
         }
         //
-        if(empty($video_id)) {
+        if(is_null($video_id)) {
             $this->error = '<u>'.$source.'</u> no es un enlace v&aacute;lido de <u>'.$server['s_titulo'].'</u>.';
             return false;
         } else return $video_id;

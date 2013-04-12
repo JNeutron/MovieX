@@ -68,6 +68,9 @@
     // Clase núcleo
     require LIB_PATH . 'moviex.class.php';
     
+    // Clase Server
+    require LIB_PATH . 'server.class.php';
+    
     // Smarty
     require INC_PATH . 'smarty' . DS . 'Smarty.class.php';
     

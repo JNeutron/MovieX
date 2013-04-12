@@ -51,7 +51,7 @@ $(function(){
 
 /** ADMIN **/
 function chServer(sID){
-    if(sID == 2){
+    if(sID == 1){
         $('#embed').show();
         $('#source').hide();
     } else {
