@@ -45,10 +45,8 @@ class Database {
 	function connect() {
 		// CONEXION
         $db_link = mysql_connect($this->dbhost, $this->dbuser, $this->dbpass);
-		// NO SE PUDO CONECTAR?
-		if(empty($db_link)) if($_SERVER['SCRIPT_NAME'] != '/moviex_install.php') header("Location: ./moviex_install.php");
 		// SELECCIONAR BASE DE DATOS
-		if(!@mysql_select_db($this->dbname)) if($_SERVER['SCRIPT_NAME'] != '/moviex_install.php') header("Location: ./moviex_install.php");
+		if ( !@mysql_select_db($this->dbname)) return false;
 		// ASIGNAR CONDIFICACION
 		@mysql_query("set names 'utf8'");
 		@mysql_query("set character set utf8");
