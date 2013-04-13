@@ -93,6 +93,25 @@
     $tpl->template_dir = ROOT . DS . 'template' . DS;
     $tpl->compile_dir = FILE_PATH . 'cache' . DS;
     
+    // Detectar URL
+    if ( ! isset($_CONF['site_path']) || empty($_CONF['site_path']))
+    {
+			if (isset($_SERVER['HTTP_HOST']))
+			{
+				$base_url = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+				$base_url .= '://'. $_SERVER['HTTP_HOST'];
+				$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+			}
+
+			else
+			{
+				$base_url = 'http://localhost/';
+			}
+            
+            // Asignamos
+            $_CONF['site_path'] = rtrim($base_url, '/');
+    } 
+    
 /*
  * ---------------------------------------------------------------
  *  Asignaciones generales
