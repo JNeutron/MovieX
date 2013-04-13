@@ -386,7 +386,7 @@ class Admin extends Database {
         $v_source = $this->getVideoID($v_source, $v_embed, $server);
         // VIDEO ID
         if(!$v_source) return false;
-        if($this->insert("cb_videos", "pelicula_id, v_calidad, v_idioma, v_servidor, v_source, v_upload, v_online","{$pelicula_id}, {$v_calidad}, {$v_idioma}, {$v_servidor}, '{$v_source}', unix_timestamp(), {$v_online}")) {
+        if($this->insert("cb_videos", "pelicula_id, v_calidad, v_idioma, v_servidor, v_source, v_embed, v_upload, v_online","{$pelicula_id}, {$v_calidad}, {$v_idioma}, {$v_servidor}, '{$v_source}', {$v_embed}, unix_timestamp(), {$v_online}")) {
             $this->message('El video fue agregado correctamente', "{$this->url}?action=list&do=videos&id={$id}", 'Regresar a lista de videos');
         }
     }
@@ -467,7 +467,7 @@ class Admin extends Database {
         $v_source = $this->getVideoID($v_source, $v_embed, $server);
         // VIDEO ID
         if(!$v_source) return false;
-        if($this->update("cb_videos", "v_calidad = {$v_calidad}, v_idioma = {$v_idioma}, v_servidor = {$v_servidor}, v_source = '{$v_source}', v_online = {$v_online}, v_reports = {$v_reports}", "video_id = {$vid}")) return 'Los datos del video fueron guardados correctamente.';
+        if($this->update("cb_videos", "v_calidad = {$v_calidad}, v_idioma = {$v_idioma}, v_servidor = {$v_servidor}, v_source = '{$v_source}', v_embed = {$v_embed}, v_online = {$v_online}, v_reports = {$v_reports}", "video_id = {$vid}")) return 'Los datos del video fueron guardados correctamente.';
         else return $this->error();
     }
     /**

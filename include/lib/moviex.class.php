@@ -187,7 +187,7 @@ class Moviex extends Database {
             } else return false;
         } else {
             $order_by = ($random == true) ? 'RAND()' : 'p.p_titulo';
-            $query = $this->query("SELECT DISTINCT p.*, g.g_titulo, g.g_seo, c.c_titulo FROM cb_peliculas AS p LEFT JOIN cb_generos AS g ON p.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON p.p_calidad = c.calidad_id WHERE MATCH (p.p_titulo) AGAINST ('{$q}' IN BOOLEAN MODE) AND p.p_online = 1 ORDER BY {$order_by} LIMIT {$limit}");
+            $query = $this->query("SELECT DISTINCT p.*, g.g_titulo, g.g_seo, c.c_titulo FROM cb_peliculas AS p LEFT JOIN cb_generos AS g ON p.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON p.p_calidad = c.calidad_id WHERE p.p_titulo LIKE '%{$q}%' AND p.p_online = 1 ORDER BY {$order_by} LIMIT {$limit}");
         }
         // 
         $data = $this->fetch_array($query);
@@ -393,7 +393,7 @@ class Moviex extends Database {
         {
             $table = array(
                 'p' => array(
-                    'table' => 'cb_pelicuas',
+                    'table' => 'cb_peliculas',
                     'col' => 'p_hits',
                     'cond' => 'pelicula_id'
                 ),
