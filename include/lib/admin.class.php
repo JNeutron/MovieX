@@ -97,6 +97,24 @@ class Admin extends Database {
         return $data;
     }
     /**
+     * Editar configuración
+     */
+    public function editConfig()
+    {
+        // DATOS
+        $cData = '';
+        
+        foreach ($_POST['config'] as $key => $val)
+        {
+            if ($key == 'site_path')
+                $val = rtrim($val, '/');
+            //
+            $this->update('cb_config', "value = '" . $val . "'", "var = '" . $key . "'");
+        }
+        
+        $this->message('La configuración del sitio fue actualizada.', "{$this->url}?action=config", 'Continuar');        
+    }
+    /**
      * Cargar todas las películas
      * 
      * @access public
@@ -130,14 +148,10 @@ class Admin extends Database {
         $query = $this->query("SELECT * FROM cb_calidades WHERE 1 ORDER BY c_titulo");
         $data['calidades'] = $this->fetch_array($query);
         $this->free($query);
-        // SERVIDOR LINKS
-        $query = $this->query("SELECT * FROM cb_servidores WHERE s_type = 2 ORDER BY s_titulo");
-        $data['s_links'] = $this->fetch_array($query);
-        $this->free($query);
-        // SERVIDOR VIDEOS
-        $query = $this->query("SELECT * FROM cb_servidores WHERE s_type = 1 ORDER BY s_titulo");
-        $data['s_videos'] = $this->fetch_array($query);
-        $this->free($query);        
+        // SERVIDORES
+        $query = $this->query("SELECT * FROM cb_servidores ORDER BY s_titulo");
+        $data['servers'] = $this->fetch_array($query);
+        $this->free($query);     
         //
         return $data;
     }
@@ -231,7 +245,7 @@ class Admin extends Database {
         // SI HAY ERRORES SALIMOS
         if($this->error) return false;
         // ACTUALIZAMOS DATOS
-        extract($mData); // <= CONVERTIMOS EL ARRAY A VARIABLES PARA AHORRAR ESPACIO
+        extract($mData, EXTR_SKIP); // <= CONVERTIMOS EL ARRAY A VARIABLES PARA AHORRAR ESPACIO
         // UPDATE
         if($this->update("cb_peliculas",
         "p_titulo = '{$p_titulo}', p_seo = '{$p_seo}', p_sinopsis = '{$p_sinopsis}', p_genero = {$p_genero}, p_idiomas = '{$p_idioma}', p_calidad = {$p_calidad}, p_ano = {$p_ano}, p_estreno = {$p_estreno}, p_online = {$p_online}",
@@ -362,10 +376,10 @@ class Admin extends Database {
         $vData = $this->getVideoData();
         if(!$vData) return false;
         // EXTRACT
-        extract($vData);
+        extract($vData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$v_servidor}", "", 1));
-        $v_source = $this->getVideoID($v_source, $server);
+        $v_source = $this->getVideoID($v_source, $v_embed, $server);
         // VIDEO ID
         if(!$v_source) return false;
         if($this->insert("cb_videos", "pelicula_id, v_calidad, v_idioma, v_servidor, v_source, v_upload, v_online","{$pelicula_id}, {$v_calidad}, {$v_idioma}, {$v_servidor}, '{$v_source}', unix_timestamp(), {$v_online}")) {
@@ -384,12 +398,18 @@ class Admin extends Database {
         global $moviex;
         $id = empty($id) ? $_GET['id'] : $id;
         //
-        $query = $this->query('SELECT v.*, s.s_titulo AS server FROM cb_videos AS v JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE video_id = ' . (int) $id . ' LIMIT 1');
+        $query = $this->query('SELECT v.*, s.s_titulo, s_plugin FROM cb_videos AS v JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE video_id = ' . (int) $id . ' LIMIT 1');
         $data = $this->fetch_assoc($query);
         $this->free();
+        // Parsear plugin
+        if ($data['s_plugin'] || $data['v_embed'])
+        {
+            $serverName = (empty($data['v_embed']) ? $data['s_titulo'] : 'embed');
+            
+            $plugin = $moviex->plugin($serverName);
+            $data['v_source'] = $plugin->getLink($data['v_source']);   
+        }
         //
-        $plugin = $moviex->plugin($data['server']);
-        $data['v_source'] = $plugin->getLink($data['v_source']);
         return $data;
     }
     /**
@@ -406,7 +426,8 @@ class Admin extends Database {
             'v_calidad' => empty($_POST['calidad']) ? null : $_POST['calidad'],
             'v_idioma' => empty($_POST['idioma']) ? null : $_POST['idioma'],
             'v_servidor' => empty($_POST['servidor']) ? null : $_POST['servidor'],
-            'v_source' => ($_POST['servidor'] == 1) ? $_POST['embed'] : $_POST['source'],
+            'v_source' => empty($_POST['embed']) ? $_POST['source'] : $_POST['code'],
+            'v_embed' => empty($_POST['embed']) ? 0 : 1,
             'v_upload' => $_POST['date'],
             'v_online' => empty($_POST['online']) ? 0 : 1,
             'v_reports' => empty($_POST['reports']) ? 0 : $_POST['reports']
@@ -436,10 +457,10 @@ class Admin extends Database {
         $vData = $this->getVideoData();
         if(!$vData) return false;
         // EXTRACT
-        extract($vData);
+        extract($vData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$v_servidor}", "", 1));
-        $v_source = $this->getVideoID($v_source, $server);
+        $v_source = $this->getVideoID($v_source, $v_embed, $server);
         // VIDEO ID
         if(!$v_source) return false;
         if($this->update("cb_videos", "v_calidad = {$v_calidad}, v_idioma = {$v_idioma}, v_servidor = {$v_servidor}, v_source = '{$v_source}', v_online = {$v_online}, v_reports = {$v_reports}", "video_id = {$vid}")) return 'Los datos del video fueron guardados correctamente.';
@@ -470,25 +491,24 @@ class Admin extends Database {
      * @param string, int
      * @return string
      */
-    private function getVideoID($source, $server)
+    private function getVideoID($source, $embed, $server)
     {
         global $moviex;
         
         $video_id = null;
         
-        if ($server['servidor_id'] == 1)
+        if ($server['s_plugin'] || !empty($embed))
         {
-            $embed = htmlspecialchars_decode($source, ENT_QUOTES);
-            $embed = str_replace("'",'"', $embed);
-            $embed = preg_replace('/width="(\d+)"/i', 'width="100%"', $embed);
-            $embed = preg_replace('/height="(\d+)"/i', 'height="100%"', $embed);
-            $video_id = $embed;
+            $serverName = (empty($embed) ? $server['s_titulo'] : 'embed');
+            
+            $plugin = $moviex->plugin($serverName);
+            $video_id = $plugin->getId($source);   
         }
         else
         {
-            $plugin = $moviex->plugin($server['s_titulo']);
-            $video_id = $plugin->getId($source);
+            $video_id = $source;
         }
+        
         //
         if(is_null($video_id)) {
             $this->error = '<u>'.$source.'</u> no es un enlace v&aacute;lido de <u>'.$server['s_titulo'].'</u>.';
@@ -524,7 +544,7 @@ class Admin extends Database {
         $lData = $this->getLinkData();
         if(!$lData) return false;
         // EXTRACT
-        extract($lData);
+        extract($lData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$d_servidor}", "", 1));
         $d_source = $this->getLinkSource($d_source, $server);
@@ -571,7 +591,7 @@ class Admin extends Database {
         $lData = $this->getLinkData();
         if(!$lData) return false;
         // EXTRACT
-        extract($lData);
+        extract($lData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$d_servidor}", "", 1));
         $d_source = $this->getLinkSource($d_source, $server);
@@ -674,6 +694,98 @@ class Admin extends Database {
             return false;
         } 
         else return $link_id;
+    }
+    /**
+     * Cargar Servidores
+     * 
+     * @return array
+     */
+    public function getServers()
+    {
+        $query = $this->query("SELECT s.*, (SELECT COUNT(*) FROM cb_videos AS v WHERE v.v_servidor = s.servidor_id) AS total FROM cb_servidores AS s ORDER BY s.s_titulo ASC");
+        $data = $this->fetch_array($query);
+        $this->free($query);
+        //
+        return $data;
+    }
+    
+    /**
+     * Cargar Servidor
+     * 
+     * @return array
+     */
+    public function getServer()
+    {
+        $id = $_GET['id'];
+        $query = $this->select("cb_servidores","*","servidor_id = {$id}","", 1);
+        $data = $this->fetch_assoc($query);
+        $this->free($query);
+        return $data;
+    }
+    /**
+     * Información del servidor
+     */
+    private function getServerData(){
+        // VARIABLES
+        $mData = array(
+            's_titulo' => empty($_POST['titulo']) ? null : $_POST['titulo'],
+            's_plugin' => empty($_POST['plugin']) ? 0 : 1, 
+        );
+        // VERIFICAR VACIOS
+        foreach($mData as $key => $val){
+            if(!isset($val)) {
+                $this->error = 'Todos los campos son requeridos.';
+                return false;
+            }
+        }
+        //
+        return $mData;
+    }
+    /**
+     * Agregar servidor
+     */
+    public function newServer()
+    {
+        $sData = $this->getServerData();
+        if(!$sData) return false;
+        // AGREGAMOS SERVIDOR
+        $this->insert('cb_servidores', 's_titulo, s_plugin', "'{$sData['s_titulo']}', {$sData['s_plugin']}");
+        // MESSAGE
+        $this->message('El servidor <b>'.$sData['s_titulo'].'</b> fue agregado correctamente.', "{$this->url}?action=list&do=servers", 'Ir al listado de servidores.');
+    }
+    /**
+     * Editar servidor
+     */
+    public function editServer()
+    {
+        $id = (int) $_GET['id'];
+        // DATOS
+        $sData = $this->getServerData();
+        if(!$sData) return false;
+        // EXTRACT
+        extract($sData, EXTR_SKIP);
+        // SERVER UPDAYE
+        if(!$s_titulo) return false;
+        if($this->update("cb_servidores", "s_titulo = '{$s_titulo}', s_plugin = {$s_plugin}", "servidor_id = {$id}")) return 'Los datos del enlace fueron guardados correctamente.';
+        else return $this->error();
+    }
+    /**
+     * Eliminar Servidor
+     */
+    public function delServer()
+    {
+        $id = (int) $_GET['id'];
+        // DATOS
+        $server = $this->getServer();
+        // ELIMINAR DATOS
+        $this->delete("cb_videos","v_servidor = {$id}");
+        $this->delete("cb_descargas","d_servidor = {$id}");
+        // ELIMINAMOS
+        if(empty($server)) {
+            $this->error = 'No se ha podido eliminar el servidor debido a que no existe en la base de datos.';
+            return false;
+        }
+        elseif($this->delete("cb_servidores","servidor_id = {$id}")) return 'El servidor <u>'.$server['s_titulo'].'</u> asi como sus videos y enlaces fueron eliminados correctamente. Ir a p&aacute;gina <a href="'.$this->url.'">principal</a>.';
     }
     /**
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -35,18 +35,3 @@ $_CONF = array();
     
     // Contraseña de la DB
     $_CONF['db.pass'] = '';
-    
-/*
- * ---------------------------------------------------------------
- *  Configuración del sitio.
- * ---------------------------------------------------------------
- */
- 
-    // Nombre de tu sitio.
-    $_CONF['site.title'] = 'MovieX';
-    
-    // URL de tu sitio.
-    $_CONF['site.path'] = 'http://www.example.com';
-    
-    // Slogan
-    $_CONF['site.slogan'] = 'Películas gratis online';

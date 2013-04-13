@@ -1,10 +1,15 @@
+                    <ul class="breadcrumb">
+                        <li><a href="{$url}/admin/index.php">Panel</a> <span class="divider">/</span></li>
+                        <li><a href="{$url}/admin/index.php?action=list&do=movies">Películas</a> <span class="divider">/</span></li>
+                        <li class="active">Película</li>
+                    </ul>
                     <form method="post" action="" class="form-horizontal" enctype="multipart/form-data">
                         <fieldset>
                             <legend>{if $action == 'edit'}Editar &raquo; {$movie.p_titulo}{else}Agregar pel&iacute;cula{/if}</legend>
                             <div class="control-group">
                                 <div class="control-label"><label for="titulo">T&iacute;tulo:</label></div>
                                 <div class="controls">
-                                    <input type="text" id="titulo" name="titulo" maxlength="60" value="{$movie.p_titulo}" />
+                                    <input type="text" id="titulo" name="titulo" maxlength="60" value="{$movie.p_titulo}" class="input-xlarge" />
                                 </div>
                             </div>
                             {if $action == 'edit'}
@@ -46,13 +51,13 @@
                                 <div class="control-label"><label for="ano">A&ntilde;o:</label></div>
                                 <div class="controls">
                                     <input type="text" id="ano" name="ano" maxlength="4" value="{$movie.p_ano}" class="span1" />
-                                    <span class="help-block muted">A&ntilde;o en que se estreno esta pel&iacute;cula.</span>
+                                    <span class="help-block muted">A&ntilde;o en que se estrenó esta pel&iacute;cula.</span>
                                 </div>
                             </div>
                             <div class="control-group">
                                 <div class="control-label"><label for="desc">Sinopsis:</label></div>
                                 <div class="controls">
-                                    <textarea name="sinopsis" id="desc" rows="5">{$movie.p_sinopsis}</textarea>
+                                    <textarea name="sinopsis" id="desc" rows="8" class="input-xxlarge">{$movie.p_sinopsis}</textarea>
                                     <span class="help-block muted">Breve rese&ntilde;a de la pel&iacute;cula.</span>
                                 </div>
                             </div>
@@ -73,10 +78,8 @@
                                 </div>
                             </div>
                             <input type="hidden" name="date" value="{if $movie.p_date}{$movie.p_date}{else}{$smarty.now}{/if}" />
-                            <div class="control-group">
-                                <div class="controls">
-                                    <button type="submit" name="save" class="btn btn-success">{if $action == 'edit'}Guardar cambios{else}Agregar pel&iacute;cula {/if}</button>
-                                </div>
+                            <div class="form-actions">
+                                <button type="submit" name="save" class="btn btn-primary">{if $action == 'edit'}Guardar cambios{else}Agregar pel&iacute;cula {/if}</button>
                             </div>
                         </fieldset>
                     </form>

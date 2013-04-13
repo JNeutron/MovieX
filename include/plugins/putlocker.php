@@ -10,16 +10,16 @@
 // ------------------------------------------------------------------------
 
 /**
- * movshare.php
+ * putlocker.php
  * 
- * Plugin para MovShare
+ * Plugin para PutLocker
  * 
  * @version 1.0.0
  */
  
 // ---------------------------------------------------------------
 
-class MovShare extends Server {
+class PutLocker extends Server {
     
     /**
      * Soporte para GK Plugin
@@ -36,7 +36,7 @@ class MovShare extends Server {
      */
     public function getId($url)
     {
-        preg_match('/movshare\.net\/video\/(.+)/i', $url, $videoId);
+        preg_match('/putlocker\.com\/file\/(.+)/i', $url, $videoId);
         
         return (count($videoId) > 0) ? end($videoId) : null;
     }
@@ -49,7 +49,7 @@ class MovShare extends Server {
      */
     public function getEmbed($videoId)
     {
-        return '<iframe width="100%" height="100%" frameborder="0" src="http://embed.movshare.net/embed.php?v='. $videoId .'&width=700&height=420" scrolling="no"></iframe>';
+        return '<iframe src="http://www.putlocker.com/embed/' . $videoId . '" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>';
     }
     
     /**
@@ -60,6 +60,6 @@ class MovShare extends Server {
      */
     public function getLink($videoId)
     {
-        return 'http://www.movshare.net/video/' . $videoId;
+        return 'http://www.putlocker.com/file/' . $videoId;
     }
 }

@@ -57,7 +57,16 @@
         break;
         case 'logout':
             $_SESSION['moviex'] = null;
-            $admin->message('Su sesi&oacute;n ha sido finalizada correctamente.', URL_SITE, 'Ir a p&aacute;gina de inicio');
+            $admin->message('Su sesi&oacute;n ha sido finalizada correctamente.', $_CONF['site_path'] . '?action=login', 'Ir a p&aacute;gina de inicio');
+        break;
+        case 'config':
+            if($_POST['date'])
+            {
+                $result = $admin->editConfig();
+                if(!$result)
+                    $tpl->assign("error",$admin->error);
+                else $tpl->assign("result", $result);
+            }
         break;
         /** LISTADOS **/
         case 'list':
@@ -81,6 +90,10 @@
                 case 'links':
                     $tpl->assign("links", $admin->getMovieLinks());
                     $tpl->assign("movie",$admin->getMovie());
+                break;
+                // SERVERS
+                case 'servers':
+                    $tpl->assign('servers', $admin->getServers());
                 break;
             }
         break;
@@ -117,6 +130,17 @@
                     }
                     $tpl->assign("movie",$admin->getMovie());
                     $tpl->assign("data", $admin->getCarData());
+                break;
+                // SERVER
+                case 'server':
+                    // NUEVO
+                    if ($_POST['date'])
+                    {
+                        $result = $admin->newServer();
+                        if( ! $result)
+                            $tpl->assign('error', $admin->error);
+                        else $tpl->assign('result', $result);
+                    }
                 break;
             }
         break;
@@ -162,6 +186,17 @@
                     $tpl->assign("link",$admin->getLink($_GET['l']));
                     $tpl->assign("data", $admin->getCarData());
                 break;
+                // SERVIDOR
+                case 'server':
+                    if($_POST['date'])
+                    {
+                        $result = $admin->editServer();
+                        if ( ! $result)
+                            $tpl->assign('error', $admin->error);
+                        else $tpl->assign('result', $result);
+                    }
+                    $tpl->assign('server', $admin->getServer());
+                break;
             }
         break;
         /** ELIMINAR **/
@@ -203,6 +238,17 @@
                         else $tpl->assign("result", $result);
                     }
                 break;
+                // SERVIDOR
+                case 'server':
+                    $delType = 'un servidor';
+                    //
+                    if($delete){
+                        $result = $admin->delServer();
+                        if(!$result)
+                            $tpl->assign("error",$admin->error);
+                        else $tpl->assign("result", $result);
+                    }
+                break;
             }
             //
             $tpl->assign("delType",$delType);
@@ -214,10 +260,20 @@
                 // VIDEO
                 case 'video':
                     $video = $admin->getVideo();
-                    $source = $moviex->getVideoSource($video['v_source'], $video['v_servidor']);
-                    if($source['type'] == 'remote') $admin->message('', "{$source['v_source']}", "{$source['v_source']}", 'Espere...');
-                    elseif($source['type'] == 'local') {
-                        $moviex->error_page('view_embed', '<div style="height:300px; margin-top:10px;">' . $video['v_source'] . '</div>', 'padding:10px;background:#FFF;');
+                    $type = 'remote';
+                    // Creando embed...
+                    if ($video['s_plugin'] || $video['v_embed'])
+                    {
+                        $serverName = (empty($video['v_embed']) ? $video['s_titulo'] : 'embed');
+                        $plugin = $moviex->plugin($serverName);
+                        
+                        $source = $plugin->getEmbed($plugin->getId($video['v_source']));
+                        $type = 'local';   
+                    }
+                    
+                    if($type == 'remote') $admin->message('', "{$source['v_source']}", "{$source['v_source']}", 'Espere...');
+                    elseif($type == 'local') {
+                        $moviex->error_page('view_embed', '<div style="height:300px; margin-top:10px;">' . $source . '</div>', 'padding:10px;background:#FFF;');
                     }
                     else $moviex->error_page('not_found', 'El enlace al que desea ir no es v&aacute;lido y no pudo ser redireccionado.');
                 break;
@@ -250,6 +306,7 @@
         break;
     }
     // EXTRA PAGES
+    $tpl->assign('isAdmin', (isset($_SESSION['moviex']) ? true : false));
     $tpl->assign("action",$action);
     $tpl->assign("do",$do);
 /*

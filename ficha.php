@@ -36,7 +36,7 @@
  */
     $info = $moviex->getMovieInfo();
     
-    $tpl->assign('title', 'Ver online ' . $info['info']['p_titulo'].' | ' . $_CONF['site.title']);
+    $tpl->assign('title', 'Ver online ' . $info['info']['p_titulo'].' | ' . $_CONF['site_name']);
     $tpl->assign("movie",$info);
     $tpl->assign("fburl",$moviex->currentUrl());
 /*

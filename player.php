@@ -35,7 +35,7 @@
  * ---------------------------------------------------------------
  */
     $video_info = $moviex->getMovieVideo();
-    $tpl->assign('title', 'Ver '. $video_info['p_titulo'].' online en '.$video_info['i_titulo'].' - '.$video_info['c_titulo'].' - '.$video_info['s_titulo'].' | ' . $_CONF['site.title']);
+    $tpl->assign('title', 'Ver '. $video_info['p_titulo'].' online en '.$video_info['i_titulo'].' - '.$video_info['c_titulo'].' - '.$video_info['s_titulo'].' | ' . $_CONF['site_name']);
     $tpl->assign("video", $video_info);
 /*
  * ---------------------------------------------------------------

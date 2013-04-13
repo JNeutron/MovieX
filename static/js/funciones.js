@@ -47,15 +47,32 @@ $(function(){
     $('#light').click(function(){
        $(this).hide(); 
     });
+    
+    $('input[name=embed]').on('click', function (){
+        var embed = $(this).val();
+        
+        if (embed == 1)
+        {
+            $('#code').show();
+            $('#source').hide();
+        }
+        else
+        {
+            $('#code').hide();
+            $('#source').show();
+        }
+    });
+    
+    $('input[name=plugin]').on('click', function (){
+        var embed = $(this).val();
+        
+        if (embed == 1)
+        {
+            $('#gkPlugin').show();
+        }
+        else
+        {
+            $('#gkPlugin').hide();
+        }
+    })
 })
-
-/** ADMIN **/
-function chServer(sID){
-    if(sID == 1){
-        $('#embed').show();
-        $('#source').hide();
-    } else {
-        $('#embed').hide();
-        $('#source').show();
-    }
-}

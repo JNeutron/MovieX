@@ -33,8 +33,13 @@ class Moviex extends Database {
      public function __construct()
      {
         global $_CONF;
-        
         parent::__construct();
+        // Configuraciones
+        $query = $this->query('SELECT * FROM cb_config');
+        while($row = $this->fetch_assoc($query))
+        {
+            $_CONF[$row['var']] = $row['value'];
+        }
         //
         $this->url = $_CONF['site.url'];
      }
@@ -131,9 +136,6 @@ class Moviex extends Database {
         $query = $this->query("SELECT p.*, g.g_titulo, g.g_seo, c.c_titulo  FROM cb_peliculas AS p LEFT JOIN cb_generos AS g ON p.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON p.p_calidad = c.calidad_id WHERE p.p_seo = '{$movieID}' LIMIT 1");
         $data['info'] = $this->fetch_assoc($query);
         $this->free($query);
-        // MODIFICAMOS
-        //$data['info']['anime_sinopsis'] = utf8_decode($data['info']['anime_sinopsis']);
-        //$data['info']['anime_generos'] = explode(',',str_replace(', ', ',',$data['info']['anime_generos']));
         // VIDEOS
         $query = $this->query("SELECT v.video_id, v.v_servidor, c.c_titulo, i.i_titulo, s.s_titulo FROM cb_videos AS v LEFT JOIN cb_calidades AS c ON v.v_calidad = c.calidad_id LEFT JOIN cb_idiomas AS i ON v.v_idioma = i.idioma_id LEFT JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE v.pelicula_id = {$data['info']['pelicula_id']} AND v.v_online = 1 ORDER BY v.video_id DESC");
         $data['vids'] = $this->fetch_array($query);
@@ -152,7 +154,7 @@ class Moviex extends Database {
 		$tags = implode(", ",$tags);
         $data['rels'] = $this->getSearch($tags, 4, true);
         // UPDAYE
-        if(!empty($data['info'])) $this->update("cb_peliculas","p_hits = p_hits + 1","pelicula_id = {$data['info']['pelicula_id']}");
+        if(!empty($data['info'])) $this->countHit('p', $data['info']['pelicula_id']);
         //
         return $data;
      }
@@ -206,23 +208,25 @@ class Moviex extends Database {
         $data = $this->fetch_assoc($query);
         $this->free($query);
         
-        // EMBED
-        if ($data['v_servidor'] == 1)
+        //
+        if ($data['s_plugin'] || $data['v_embed'])
         {
-            $data['plugin'] = false;
-            $data['source'] = false;
-            $data['embed'] = htmlspecialchars_decode($data['v_source'], ENT_QUOTES);
-        }
-        else
-        {
-            $plugin = $this->plugin($data['s_titulo']);
+            $serverName = (empty($data['v_embed']) ? $data['s_titulo'] : 'embed');
+            //
+            $plugin = $this->plugin($serverName);
             //
             $data['plugin'] = $plugin->isPlugin();
             $data['source'] = $plugin->getLink($data['v_source']);
-            $data['embed'] = $plugin->getEmbed($data['v_source']);   
+            $data['embed'] = $plugin->getEmbed($data['v_source']);
+        }
+        else
+        {
+            $data['plugin'] = false;
+            $data['source'] = false;
+            $data['embed'] = $data['v_source'];   
         }
         // UPDATE
-        if(!empty($data)) $this->update("cb_videos","v_hits = v_hits + 1","video_id = {$data['video_id']}");
+        if(!empty($data)) $this->countHit('v', $data['video_id']);
         //
         return $data;
      }
@@ -318,7 +322,7 @@ class Moviex extends Database {
         }
         $data['d_source'] = substr($nSource, 0, -1);
         // UPDATE
-        if(!empty($data)) $this->update("cb_descargas","d_hits = d_hits + 1","descarga_id = {$data['descarga_id']}");
+        if(!empty($data)) $this->countHit('d', $data['descarga_id']);
         //
         return $data;
     }
@@ -439,6 +443,48 @@ class Moviex extends Database {
 		return $current_url;
 	}
     
+    /**
+     * Contar Visita
+     * 
+     * @access public
+     * @param $table
+     * @param $id
+     * @return void
+     */
+    public function countHit($type, $id)
+    {
+        $hash = substr(md5($table . $id), 0, 10);
+        
+        if ( ! isset($_SESSION['count'][$hash]))
+        {
+            $table = array(
+                'p' => array(
+                    'table' => 'cb_pelicuas',
+                    'col' => 'p_hits',
+                    'cond' => 'pelicula_id'
+                ),
+                'v' => array(
+                    'table' => 'cb_videos',
+                    'col' => 'v_hits',
+                    'cond' => 'video_id'
+                ),
+                'd' => array(
+                    'table' => 'cb_descargas',
+                    'col' => 'd_hits',
+                    'cond' => 'descarga_id'
+                )
+            );
+            
+            //
+            $col = $table[$type]['col'];
+            $cond = $table[$type]['cond'];
+            $table = $table[$type]['table'];
+            
+            $this->query("UPDATE {$table} SET {$col} = {$col} + 1 WHERE {$cond} = {$id}");
+            
+            $_SESSION['count'][$hash] = true;
+        }
+    }
     
     /**
      * Cargar Plugin de Servidor
@@ -450,7 +496,7 @@ class Moviex extends Database {
     {
         if (file_exists($filePath = INC_PATH . 'plugins' . DS . strtolower($serverName) . '.php'))
         {
-            require $filePath;
+            require_once $filePath;
             
             if (class_exists($serverName))
             {

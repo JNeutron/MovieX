@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="{$url_static}/js/jTable/style.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="{$url_static}/js/jTable/jquery-ui-1.8.14.custom.css" type="text/css" media="screen" />
     {/if}
-    <script type="text/javascript" src="{$url_static}/player/jwplayer.js"></script>
 </head>
 <body>
     <div id="light"></div>
@@ -21,16 +20,17 @@
       var js, fjs = d.getElementsByTagName(s)[0];
       if (d.getElementById(id)) return;
       js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/es_LA/all.js#xfbml=1&appId=121674947884892";
+      js.src = "//connect.facebook.net/es_LA/all.js#xfbml=1&appId={/literal}{$config.fb_app_id}{literal}";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));</script>
     {/literal}
     <div class="container">
-        <div class="row-fluid">
+        <div class="header row-fluid">
             <div class="span4">
-                <h3 class="muted"><a href="{$url}">MovieX</a></h3>
+                <h3><a href="{$url}" class="muted">{$config.site_name}</a></h3>
             </div>
             <div class="span8">
+                {if $page != 'admin' && $page != 'message'}
                 <div class="row">
                     <div class="span12">
                         <div class="pull-right">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-                {if $page != 'admin' && $page != 'message'}
+                {if $ads.ad468}
                 <div class="row">
                     <div class="span12">
                         <div class="pull-right">
@@ -49,6 +49,7 @@
                         </div>
                     </div>
                 </div>
+                {/if}
                 {/if}
             </div>
         </div>

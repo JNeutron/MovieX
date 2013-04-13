@@ -35,7 +35,7 @@
  * ---------------------------------------------------------------
  */
     $dLink = $moviex->getDownloadLink();
-    $tpl->assign('title', 'Descargar ' . $dLink['p_titulo'].' en '.$dLink['i_titulo'].' - '.$dLink['c_titulo'].' - '.$dLink['s_titulo'].' | ' . $_CONF['site.title']);
+    $tpl->assign('title', 'Descargar ' . $dLink['p_titulo'].' en '.$dLink['i_titulo'].' - '.$dLink['c_titulo'].' - '.$dLink['s_titulo'].' | ' . $_CONF['site_name']);
     $tpl->assign("dLink", $dLink);
 /*
  * ---------------------------------------------------------------

@@ -15,7 +15,7 @@
                                         <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" /></a>
                                         <div class="caption">
                                             <h5><a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html">{$m.p_titulo|truncate:50}</a></h5>
-                                            <p><a href="{$url}/{$m.g_seo}">{$m.g_titulo}</a></p>
+                                            <p><a href="{$url}/{$m.g_seo}/">{$m.g_titulo}</a></p>
                                             <p>{$m.c_titulo}</p>
                                         </div>
                                     </div>
@@ -34,7 +34,7 @@
                                         <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" /></a>
                                         <div class="caption">
                                             <h5><a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html">{$m.p_titulo|truncate:50}</a></h5>
-                                            <p><a href="{$url}/{$m.g_seo}">{$m.g_titulo}</a></p>
+                                            <p><a href="{$url}/{$m.g_seo}/">{$m.g_titulo}</a></p>
                                             <p>{$m.c_titulo}</p>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                         <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" /></a>
                                         <div class="caption">
                                             <h5><a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html">{$m.p_titulo|truncate:50}</a></h5>
-                                            <p><a href="{$url}/{$m.g_seo}">{$m.g_titulo}</a></p>
+                                            <p><a href="{$url}/{$m.g_seo}/">{$m.g_titulo}</a></p>
                                             <p>{$m.c_titulo}</p>
                                         </div>
                                     </div>
@@ -72,7 +72,7 @@
                                         <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" /></a>
                                         <div class="caption">
                                             <h5><a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html">{$m.p_titulo|truncate:50}</a></h5>
-                                            <p><a href="{$url}/{$m.g_seo}">{$m.g_titulo}</a></p>
+                                            <p><a href="{$url}/{$m.g_seo}/">{$m.g_titulo}</a></p>
                                             <p>{$m.c_titulo}</p>
                                         </div>
                                     </div>

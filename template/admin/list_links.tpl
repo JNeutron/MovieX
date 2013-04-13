@@ -1,7 +1,17 @@
-                    {if $movie}
-                    <legend><a href="{$url}/admin/index.php?action=edit&do=movie&id={$movie.pelicula_id}" style="text-decoration:none">&laquo; {$movie.p_titulo}</a></legend>
+                {if $movie}
+                    <ul class="breadcrumb">
+                        <li><a href="{$url}/admin/index.php">Panel</a> <span class="divider">/</span></li>
+                        <li><a href="{$url}/admin/index.php?action=list&do=movies">Películas</a> <span class="divider">/</span></li>
+                        <li class="active">{$movie.p_titulo}</li>
+                    </ul>
+                    <div class="adminHeader clearfix">
+                        <h2 class="pull-left">Lista de enlaces</h2>
+                        <div class="pull-right btn-group">
+                            <a href="{$url}/admin/index.php?action=list&do=videos&id={$movie.pelicula_id}" class="btn btn-small"><i class="icon-list"></i> Ver videos</a>
+                            <a href="{$url}/admin/index.php?action=add&do=link&id={$movie.pelicula_id}" class="btn btn-success btn-small"><i class="icon-plus icon-white"></i> Agregar enlace</a>
+                        </div>
+                    </div>
                     {if $links}
-                    <h4 class="title">Lista de enlaces</h4>
                     <table class="table table-striped">
                     	<thead>
                             <th>ID</th>
@@ -12,7 +22,7 @@
                             <th>Visitas</th>
                             <th>Reportes</th>
                             <th>Status</th>
-                            <th>Acciones</th>
+                            <th style="width: 116px">&nbsp;</th>
                         </thead>
                         <tbody>
                         	{foreach from=$links item=d}
@@ -39,6 +49,4 @@
                     {else}
                     <div class="alert">No se han agregado enlaces de descarga a esta pel&iacute;cula.</div>
                     {/if}
-                    <a href="{$url}/admin/index.php?action=add&do=link&id={$movie.pelicula_id}" class="btn"><i class="icon-plus"></i> Agregar nuevo enlace</a>
-                    <a href="{$url}/admin/index.php?action=add&do=video&id={$movie.pelicula_id}" class="btn"><i class="icon-plus"></i> Agregar nuevo video</a>
-                    {/if}
+                {/if}

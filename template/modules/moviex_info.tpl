@@ -38,7 +38,7 @@
                                 <a href="{$url}/{$movie.info.g_seo}/{$movie.info.p_seo}_{$v.i_titulo|seo}-{$v.c_titulo|seo}-{$v.video_id}.html">
                                     <span class="title">Mirror {$id+1} : {$v.s_titulo}</span>
                                     <span class="info">Calidad: {$v.c_titulo} | Idioma: {$v.i_titulo}</span>
-                                    <span class="icon"><img src="{$url}/cdn/images/server_{$v.v_servidor}.png" /></span>
+                                    <span class="icon"><img src="{$url_static}/img/video.png" /></span>
                                 </a>
                             </li>
                             {/foreach}
@@ -47,10 +47,12 @@
                     </div>
                     <hr />
                     {/if}
+                    {if $ads.ad300}
                     <div style="text-align: center">
                         {$ads.ad300}
                     </div>
                     <hr />
+                    {/if}
                     {if $movie.downs}
                     <h3 class="mx_title">Descargar <strong>{$movie.info.p_titulo}</strong></h3>
                     <div class="row-fluid">
@@ -61,7 +63,7 @@
                                 <a href="{$url}/{$movie.info.g_seo}/{$movie.info.p_seo}_{$d.i_titulo|seo}-{$d.c_titulo|seo}-descargar-{$d.descarga_id}.html">
                                     <span class="title">Mirror {$id+1} : {$d.s_titulo} {if $d.d_parts > 1}: {$d.d_parts} Partes{/if}</span>
                                     <span class="info">Calidad: {$d.c_titulo} | Idioma: {$d.i_titulo}</span>
-                                    <span class="icon"><img src="{$url}/cdn/images/server_{$d.d_servidor}.png" /></span>
+                                    <span class="icon"><img src="{$url_static}/img/save.png" /></span>
                                 </a>
                             </li>
                             {/foreach}

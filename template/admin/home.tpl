@@ -1,5 +1,7 @@
                     {if $reports.videos}
-                    <legend>&Uacute;ltimos videos reportados</legend>
+                    <div class="adminHeader">
+                        <h2>&Uacute;ltimos videos reportados</h2>
+                    </div>
                     <table class="table table-striped">
                     	<thead>
                             <th>No. Reportes</th>
@@ -9,7 +11,7 @@
                             <th>Calidad</th>
                             <th>Visitas</th>
                             <th>Agregado</th>
-                            <th>Acciones</th>
+                            <th style="width: 116px">&nbsp;</th>
                         </thead>
                         <tbody>
                         	{foreach from=$reports.videos item=r}
@@ -36,7 +38,9 @@
                     <div class="alert">No ha sido reportado ningun video.</div>
                     {/if}
                     {if $reports.downs}
-                    <legend>&Uacute;ltimos enlaces reportados</legend>
+                    <div class="adminHeader">
+                        <h2>&Uacute;ltimos enlaces reportados</h2>
+                    </div>
                     <table class="table table-striped">
                     	<thead>
                             <th>No. Reportes</th>
@@ -46,7 +50,7 @@
                             <th>Calidad</th>
                             <th>Visitas</th>
                             <th>Agregado</th>
-                            <th>Acciones</th>
+                            <th style="width: 116px">&nbsp;</th>
                         </thead>
                         <tbody>
                         	{foreach from=$reports.downs item=r}

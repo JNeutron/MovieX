@@ -27,7 +27,7 @@
     // Página & Título
     $tpl->assign(array(
         'page' => 'home',
-        'title' => $_CONF['site.title'] . ' - ' . $_CONF['site.slogan']
+        'title' => $_CONF['site_name'] . ' - ' . $_CONF['site_slogan']
     ));
     
 /*

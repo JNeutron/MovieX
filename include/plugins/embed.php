@@ -10,23 +10,23 @@
 // ------------------------------------------------------------------------
 
 /**
- * movshare.php
+ * embed.php
  * 
- * Plugin para MovShare
+ * Plugin para código embed
  * 
  * @version 1.0.0
  */
  
 // ---------------------------------------------------------------
 
-class MovShare extends Server {
+class Embed extends Server {
     
     /**
      * Soporte para GK Plugin
      * 
      * @var bool
      */
-    public $gkPlugin = true;
+    public $gkPlugin = false;
     
     /**
      * Obtener ID del video.
@@ -34,11 +34,14 @@ class MovShare extends Server {
      * @param string $url
      * @return string ID
      */
-    public function getId($url)
+    public function getId($source)
     {
-        preg_match('/movshare\.net\/video\/(.+)/i', $url, $videoId);
+        $embed = htmlspecialchars_decode($source, ENT_QUOTES);
+        $embed = str_replace("'",'"', $embed);
+        $embed = preg_replace('/width="(\d+)"/i', 'width="100%"', $embed);
+        $embed = preg_replace('/height="(\d+)"/i', 'height="100%"', $embed);
         
-        return (count($videoId) > 0) ? end($videoId) : null;
+        return $embed;
     }
     
     /**
@@ -47,9 +50,9 @@ class MovShare extends Server {
      * @param string $videoId
      * @return string Embed code
      */
-    public function getEmbed($videoId)
+    public function getEmbed($source)
     {
-        return '<iframe width="100%" height="100%" frameborder="0" src="http://embed.movshare.net/embed.php?v='. $videoId .'&width=700&height=420" scrolling="no"></iframe>';
+        return $source;
     }
     
     /**
@@ -58,8 +61,8 @@ class MovShare extends Server {
      * @param string $videoId
      * @return string URL
      */
-    public function getLink($videoId)
+    public function getLink($source)
     {
-        return 'http://www.movshare.net/video/' . $videoId;
+        return $source;
     }
 }

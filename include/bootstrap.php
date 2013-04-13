@@ -100,11 +100,11 @@
  */
  
     $tpl->assign(array(
-        'url' => $_CONF['site.path'],
-        'url_cover' => $_CONF['site.path'] . '/file/cover',
-        'url_static' => $_CONF['site.path'] . '/static',
+        'url' => $_CONF['site_path'],
+        'url_cover' => $_CONF['site_path'] . '/file/cover',
+        'url_static' => $_CONF['site_path'] . '/static',
         
-        'site_name' => $_CONF['site.title'],
+        'config' => &$_CONF,
         
         // Películas aleatorias
         'randMoviex' => $moviex->getMovies(),

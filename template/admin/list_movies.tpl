@@ -1,4 +1,10 @@
-                    <h4>Listado de películas</h4>
+                    <ul class="breadcrumb">
+                        <li><a href="{$url}/admin/index.php">Panel</a> <span class="divider">/</span></li>
+                        <li class="active">Películas</li>
+                    </ul>
+                    <div class="adminHeader clearfix">
+                        <h2>Películas</h2>
+                    </div>
                     <table class="table table-striped">
                     	<thead>
                             <th>ID</th>
@@ -7,7 +13,7 @@
                             <th>Fecha</th>
                             <th>Visitas</th>
                             <th>Status</th>
-                            <th>Acciones</th>
+                            <th style="width: 153px">&nbsp;</th>
                         </thead>
                         <tbody>
                         	{foreach from=$movies item=m}
@@ -23,7 +29,7 @@
                                     <a href="{$url}/admin/index.php?action=edit&do=movie&id={$m.pelicula_id}" class="btn" data-toggle="tooltip" title="Editar"><i class="icon-edit"></i></a>
                                     <a href="{$url}/admin/index.php?action=list&do=videos&id={$m.pelicula_id}" class="btn" title="Videos de la pel&iacute;cula"><i class="icon-film"></i></a>
                                     <a href="{$url}/admin/index.php?action=list&do=links&id={$m.pelicula_id}" class="btn" title="Enlaces de descarga"><i class="icon-globe"></i></a>
-                                    <a href="{$url}/admin/index.php?action=delete&do=movie&id={$m.pelicula_id}" class="btn" title="Eliminar pel&iacute;cula"><i class="icon-remove-circle"></i></a>
+                                    <a href="{$url}/admin/index.php?action=delete&do=movie&id={$m.pelicula_id}" class="btn" title="Eliminar pel&iacute;cula"><i class="icon-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

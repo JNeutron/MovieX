@@ -37,7 +37,7 @@
     $mypage = $_GET['page'];
     $pageInfo = $moviex->getPage($mypage);
     //
-    $tpl->assign('title', $pageInfo['page_title'] . ' &bull; ' . $_CONF['site.title']);
+    $tpl->assign('title', $pageInfo['page_title'] . ' &bull; ' . $_CONF['site_name']);
     $tpl->assign("pageInfo", $pageInfo);
 /*
  * ---------------------------------------------------------------

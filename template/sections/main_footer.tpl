@@ -1,4 +1,4 @@
-        {if $page != 'admin' && $page != 'message'}<div class="mxAd">{$ads.ad728}</div>{/if}
+        {if $page != 'admin' && $page != 'message' && $ads.ad728}<div class="mxAd">{$ads.ad728}</div>{/if}
         <div class="footer clearfix">
             <div class="pull-left"><a href="{$url}"><strong>{$site_name}</strong></a> &copy; {$smarty.now|date_format:"%Y"} - Todos los derechos reservados.</div>
             <div class="pull-right">El uso de este sitio aplica la aceptaci&oacute;n de sus <a href="{$url}/page/terms-of-use.html">pol&iacute;ticas de uso</a>. 

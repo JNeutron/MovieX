@@ -2,12 +2,12 @@
             <div class="row">
                 <div class="span9">
                     {if $result}
-                    <h3 class="mx_title">{if $type == 'search'}Resultados para{elseif $type == 'abc'}Pel&iacute;culas con la letra{else}Genero{/if} &raquo; {$q|ucfirst}</h3>
+                    <h3 class="mx_title">{if $type == 'search'}Resultados para{elseif $type == 'abc'}Pel&iacute;culas con la letra{else}Género{/if} &raquo; {$q|ucfirst}</h3>
                     {foreach from=$result item=m}
                     <hr />
                     <div class="row-fluid">
                         <div class="span2">
-                            <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" width="104" /></a>
+                            <a title="{$m.p_titulo}" href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html"><img src="{$url_cover}/{$m.pelicula_id}.jpg" width="100" class="img-polaroid" /></a>
                         </div>
                         <div class="span10">
                             <h3 class="mx_title"><a href="{$url}/{$m.g_seo}/{$m.p_titulo|seo}.html">{$m.p_titulo|truncate:50}</a></h3>

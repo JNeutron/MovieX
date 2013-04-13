@@ -1,3 +1,7 @@
+                    <ul class="breadcrumb">
+                        <li><a href="{$url}/admin/index.php">Panel</a> <span class="divider">/</span></li>
+                        <li class="active">Publicidad</li>
+                    </ul>
                     <form method="post" action="" class="form-horizontal">
                         <fieldset>
                             <legend>Administrar publicidad</legend>
