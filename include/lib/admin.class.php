@@ -42,9 +42,13 @@ class Admin extends Database {
         global $_CONF;
         
         $this->url = $_CONF['site.path'] . "/admin/index.php";
-        
+        // CHECAR INSTALADOR
+        if ( file_exists(ROOT . DS . 'admin' . DS . 'install.php'))
+        {
+            $this->message('Por favor elimina el instalador antes de utilizar el sitio.', null);
+        }
+        // Session
         if(empty($_SESSION['moviex'])) $this->loadSession($_SESSION['moviex']);
-        //
      }
 	/**
 	 * CARGAR SESION DE USUARIO
@@ -887,7 +891,7 @@ class Admin extends Database {
         // DEFAULTS
         $mtitle = empty($mtitle) ? 'Informaci&oacute;n' : $mtitle;
         $message = empty($message) ? 'Ser&aacute; redireccionado en 3 segundos.' : $message;
-        $mlink = empty($mlink) ? 'javascript:history.go(-1);' : $mlink;
+        $mlink = ( !is_null($mlink) && empty($mlink)) ? 'javascript:history.go(-1);' : $mlink;
         $mlinktxt = empty($mlinktxt) ? 'Clic si tu navegador no te redirecciona.' : $mlinktxt;
         //
         $tpl->assign("message", $message);

@@ -53,7 +53,7 @@ class Moviex extends Database {
     public function isInstalled(){
         $query = $this->select("cb_admins","*","1");
         $install = $this->num_rows($query);
-        if(!$install && $_SERVER['SCRIPT_NAME'] != '/moviex_install.php') header("Location: ./moviex_install.php");
+        if(!$install && $_SERVER['SCRIPT_NAME'] != '/admin/install.php') header("Location: admin/install.php");
         else return true;
     }
     /**

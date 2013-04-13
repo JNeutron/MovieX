@@ -28,10 +28,10 @@ $_CONF = array();
     $_CONF['db.host'] = '127.0.0.1';
     
     // Nombre de la BD
-    $_CONF['db.name'] = 'test_tmp';
+    $_CONF['db.name'] = '';
     
     // Usuario de la DB
-    $_CONF['db.user'] = 'root';
+    $_CONF['db.user'] = '';
     
     // Contraseña de la DB
     $_CONF['db.pass'] = '';
