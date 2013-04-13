@@ -57,7 +57,7 @@
         break;
         case 'logout':
             $_SESSION['moviex'] = null;
-            $admin->message('Su sesi&oacute;n ha sido finalizada correctamente.', $_CONF['site_path'] . '?action=login', 'Ir a p&aacute;gina de inicio');
+            $admin->message('Su sesi&oacute;n ha sido finalizada correctamente.', $_CONF['site_path'] . '/admin/index.php?action=login', 'Ir a p&aacute;gina de inicio');
         break;
         case 'config':
             if($_POST['date'])

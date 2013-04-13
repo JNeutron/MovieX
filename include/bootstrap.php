@@ -109,7 +109,7 @@
 			}
             
             // Asignamos
-            $_CONF['site_path'] = rtrim($base_url, '/');
+            $_CONF['site_path'] = rtrim(str_replace('/admin', '', $base_url), '/');
     } 
     
 /*

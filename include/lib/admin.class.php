@@ -41,7 +41,7 @@ class Admin extends Database {
         //
         global $_CONF;
         
-        $this->url = $_CONF['site.path'] . "/admin/index.php";
+        $this->url = $_CONF['site_path'] . "/admin/index.php";
         // CHECAR INSTALADOR
         if ( file_exists(ROOT . DS . 'admin' . DS . 'install.php'))
         {
@@ -551,7 +551,6 @@ class Admin extends Database {
         extract($lData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$d_servidor}", "", 1));
-        $d_source = $this->getLinkSource($d_source, $server);
         // LINK SOURCE
         if(!$d_source) return false;
         if($this->insert("cb_descargas", "pelicula_id, d_calidad, d_idioma, d_servidor, d_source, d_upload, d_online","{$pelicula_id}, {$d_calidad}, {$d_idioma}, {$d_servidor}, '{$d_source}', unix_timestamp(), {$d_online}")) {
@@ -573,12 +572,6 @@ class Admin extends Database {
         $query = $this->select("cb_descargas","*","descarga_id = {$id}", null, 1);
         $data = $this->fetch_assoc($query);
         $this->free();
-        // EDIT
-        $parts = explode("\n",$data['d_source']);
-        foreach($parts as $part){
-            $nSource .= $moviex->getLinkSource($part, $data['d_servidor'])."\n"; 
-        }
-        $data['d_source'] = substr($nSource, 0, -1);
         //
         return $data;
     }
@@ -598,7 +591,6 @@ class Admin extends Database {
         extract($lData, EXTR_SKIP);
         // SERVIDOR
         $server = $this->fetch_assoc($this->select("cb_servidores","*","servidor_id = {$d_servidor}", "", 1));
-        $d_source = $this->getLinkSource($d_source, $server);
         // VIDEO ID
         if(!$d_source) return false;
         if($this->update("cb_descargas", "d_calidad = {$d_calidad}, d_idioma = {$d_idioma}, d_servidor = {$d_servidor}, d_source = '{$d_source}', d_online = {$d_online}, d_reports = {$d_reports}", "descarga_id = {$lid}")) return 'Los datos del enlace fueron guardados correctamente.';
@@ -650,54 +642,6 @@ class Admin extends Database {
         }
         //
         return $lData;
-    }
-    /**
-     * VALIDAR EL ENLACE
-     * 
-     * @access private
-     * @param string, int
-     * @return string
-     */
-    private function getLinkSource($source, $server){
-        // SERVERS
-        $aData = array(
-            3 => array('id' => 'megaupload.com', 'size' => 8, 'sep' => '?d='),
-            4 => array('id' => 'mediafire.com', 'size' => 15, 'sep' => '?'),
-            5 => array('id' => 'fileserve.com', 'size' => 7, 'sep' => 'file/')
-        );
-        // CUAL?
-        $sData = $aData[$server['servidor_id']];
-        // MULTIPARTES
-        $parts = explode("\n",$source);
-        foreach($parts as $key => $part){
-            // PROCESAR.. COMPLICADO? NA FACIL JEJE
-            $exists = strpos($part, $sData['id']);
-            $count = strlen($part);
-            // ELIMINAR CARACTERES RAROS
-            $seo_id = $this->setSeo($part, '');
-            // COMPROVACIONES
-            if($exists !== false && $count != $sData['size']){
-                $_id = explode($sData['sep'], $part);
-                $_id = substr($_id[1], 0 , $sData['size']);
-                // ELIMINAR CARACTERES RAROS
-                $seo_id = $this->setSeo($_id, '');
-                //
-                if(strlen($seo_id) == $sData['size']) $link_id .= $_id."\n";
-                else $eLinks .= '&bull; <a href="'.$part.'" target="_blank">' . $part . "</a><br/>";
-                // 
-            } 
-            // SOLO EL ID
-            elseif($count == $sData['size']) $link_id .= $part."\n";
-            // NO ES SU SERVIDOR
-            elseif($exists === false && !empty($seo_id)) $eLinks .= '&bull; <a href="'.$part.'" target="_blank">' . $part . "</a><br/>";
-        }
-        // MENOS 1
-        $link_id = substr($link_id, 0, -1);
-        if(!empty($eLinks)) {
-            $this->error = 'Los siguientes enlaces no son v&aacute;lidos para <u>'.$server['s_titulo'].'</u>.<br/>'.$eLinks.'Los cambios no fueron guardados.';
-            return false;
-        } 
-        else return $link_id;
     }
     /**
      * Cargar Servidores

@@ -206,7 +206,7 @@ class Moviex extends Database {
         // VARS
         $vid = (int) $_GET['id'];
         // CARGAMOS INFORMACION DEL VIDEO
-        $query = $this->query("SELECT m.p_titulo, m.p_date, m.p_v_up, m.p_v_down, g.g_titulo, v.*, c.c_titulo, i.i_titulo, s.s_titulo FROM cb_peliculas AS m LEFT JOIN cb_videos AS v ON m.pelicula_id = v.pelicula_id LEFT JOIN cb_generos AS g ON m.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON v.v_calidad = c.calidad_id LEFT JOIN cb_idiomas AS i ON v.v_idioma = i.idioma_id LEFT JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE v.video_id = {$vid} LIMIT 1");
+        $query = $this->query("SELECT m.p_titulo, m.p_date, m.p_v_up, m.p_v_down, g.g_titulo, v.*, c.c_titulo, i.i_titulo, s.s_titulo, s_plugin FROM cb_peliculas AS m LEFT JOIN cb_videos AS v ON m.pelicula_id = v.pelicula_id LEFT JOIN cb_generos AS g ON m.p_genero = g.genero_id LEFT JOIN cb_calidades AS c ON v.v_calidad = c.calidad_id LEFT JOIN cb_idiomas AS i ON v.v_idioma = i.idioma_id LEFT JOIN cb_servidores AS s ON v.v_servidor = s.servidor_id WHERE v.video_id = {$vid} LIMIT 1");
         $data = $this->fetch_assoc($query);
         $this->free($query);
         
@@ -233,75 +233,6 @@ class Moviex extends Database {
         return $data;
      }
     /**
-     * Embed of Video
-     * 
-     * @access private
-     * @param string | int
-     * @return string
-     */
-    private function getEmbedVideo($source, $server){
-        // TIPO DE SERVIDOR
-        switch($server){
-            # MEGAVIDEO
-            case 1:
-                $return['link'] = 'http://www.megavideo.com/?v='.$source;
-                $return['code'] = '<embed width="100%" height="100%" allowfullscreen="true" type="application/x-shockwave-flash" src="http://wwwstatic.megavideo.com/mv_player.swf?image=http://caratulas.cinetube.es/img/cont/movie.jpg&amp;v='.$source.'">';
-            break;
-            # EMBED
-            case 2:
-                $return['link'] = '#';
-                $return['code'] = htmlspecialchars_decode($source, ENT_QUOTES);
-            break;
-        }
-        //
-        return $return;
-    }
-    /**
-     * GENERAR LINK ORIGINAL DE UN VIDEO
-     * 
-     * @access public
-     * @param string, int
-     * @return none
-     */
-    public function getVideoSource($source, $server){
-        switch($server){
-            # MEGAVIDEO #
-            case 1:
-                $data['v_source'] = 'http://www.megavideo.com/?v='.$source;
-                $data['type'] = 'remote';
-            break;
-            # EMBED #
-            case 2:
-                $data['type'] = 'local';
-            break;
-        }
-        //
-        return $data;
-    }
-    /**
-     * GENERAR LINK ORIGINAL DE UN VIDEO
-     * 
-     * @access public
-     * @param string, int
-     * @return none
-     */
-    public function getLinkSource($source, $server){
-        switch($server){
-            # MEGAUPLOAD #
-            case 3:
-                return 'http://www.megaupload.com/?d='.$source;
-            break;
-            # MEDIAFIRE #
-            case 4:
-                return 'http://www.mediafire.com/?'. $source;
-            break;
-            # FileServe #
-            case 5:
-                return 'http://www.fileserve.com/file/'.$source.'/';
-            break;
-        }
-    }
-    /**
      * Download movie
      * 
      * @access public
@@ -316,8 +247,9 @@ class Moviex extends Database {
         $this->free($query);
         // EDIT
         $parts = explode("\n",$data['d_source']);
-        foreach($parts as $part){
-            $source = $this->getLinkSource($part, $data['d_servidor']);
+        foreach($parts as $part)
+        {
+            $source = $part;
             // ASSIGN
             $data['d_parts'][] = $source;
             $nSource .= $source."\n"; 
